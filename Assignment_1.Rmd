@@ -1,0 +1,57 @@
+---
+title: "Assignment_1"
+author: "Chase Holland"
+date: "2023-09-11"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+Real_Estate_Sales_2001_2020_GL_1_ <- read_excel("C:/Users/choll/Downloads/Real_Estate_Sales_2001-2020_GL (1).xlsx")
+
+```
+
+## Assignment 1
+
+This assignment was complete using data showing all home sales from 2001 - 2018 in the state of Connecticut. This data file can be accessed at the following website: https://catalog.data.gov/dataset/real-estate-sales-2001-2018.
+
+
+
+```{r cars}
+
+#First, I have a summary of all variables.
+
+summary(Real_Estate_Sales_2001_2020_GL_1_)
+
+#Next, I did the same for just the Assessed Value variable.
+
+summary(Real_Estate_Sales_2001_2020_GL_1_$`Assessed Value`)
+
+#I then did the same for Sale Amount.
+
+summary(Real_Estate_Sales_2001_2020_GL_1_$`Sale Amount`)
+
+#Next, I got the standard deviations for both variables.
+
+sd(Real_Estate_Sales_2001_2020_GL_1_$`Assessed Value`)
+sd(Real_Estate_Sales_2001_2020_GL_1_$`Sale Amount`)
+
+#I then did a summary of the categorical variables of Town and Residence type, showing how many entries there were for each category.
+
+cbind(table(Real_Estate_Sales_2001_2020_GL_1_$'Town'))
+cbind(table(Real_Estate_Sales_2001_2020_GL_1_$`Residential Type`))
+
+
+#The Following is a bar chart showing the number of listings for each year.
+
+barplot(table(Real_Estate_Sales_2001_2020_GL_1_$`List Year`))
+
+#Finally, I show a scatterplot of the assessed value of the homes and the dates they were recorded.
+
+plot(Real_Estate_Sales_2001_2020_GL_1_$`Date Recorded`, Real_Estate_Sales_2001_2020_GL_1_$`Assessed Value`)
+
+
+
+```
+

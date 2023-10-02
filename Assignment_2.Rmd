@@ -1,0 +1,75 @@
+library(caret)
+library(class)
+bank <- read.csv("/Users/choll/Downloads/UniversalBank.csv")
+summary(bank)
+
+##1
+#removing ID and zip
+bank$ID<-NULL
+bank$ZIP.Code<-NULL
+summary(bank)
+
+#creating dummy variables
+bank$Education <- as.factor(bank$Education)
+bank$Personal.Loan <- as.factor(bank$Personal.Loan)
+bank$Securities.Account <- as.factor(bank$Securities.Account)
+bank$CD.Account <- as.factor(bank$CD.Account)
+bank$Online <- as.factor(bank$Online)
+bank$CreditCard <- as.factor(bank$CreditCard)
+
+#splitting training and validation data
+train_index <- createDataPartition(bank$Personal.Loan,p=0.6, list = FALSE)
+train <- bank[train_index, ]
+validation <- bank[-train_index, ]
+
+#new customer
+new_cust <- data.frame(Age=40, Experience=10, Income=84, Family=2, CCAvg=2, Education_1=0, Education_2=1, Education_3=0, Mortgage=0, Securities.Account=0, CD.Account=0, Online=1, CreditCard=1)
+summary(new_cust)
+classification <- knn(train=train[,1:7],test=new_cust[,1:7],cl=train$Personal.Loan,k=1)
+summary(classification)
+
+##2
+#determining k
+set.seed(123)
+fitcontrol<-trainControl(method="repeatedcv",number=3,repeats=2)
+searchGrid=expand.grid(k=1:10)
+knnmodel <- train(Personal.Loan~.,
+                  data = train,
+                  method = 'knn',
+                  tuneGrid = searchGrid,
+                  trControl = fitcontrol)
+knnmodel
+
+predictions <- predict(knnmodel,validation)
+
+##3
+#confusionmatrix
+
+confusionMatrix(predictions,validation$Personal.Loan)
+
+##4
+#classify using k
+
+cust_prediction=data.frame(Age=40, Experience=10, Income=84, Family=2, CCAvg=2, Education=1, Mortgage=0, Securities.Account=0, CD.Account=0, Online=1, CreditCard=1)
+####predict(knnmodel,cust_prediction)
+
+##5
+#changing data sizes
+
+test_size = 0.2
+test_index = createDataPartition(bank$Personal.Loan, p = 0.2, list = FALSE)
+test = bank[train_index,]
+
+test_index = createDataPartition(bank$Personal.Loan, p=0.2, list = FALSE)
+train_index = createDataPartition(bank$Personal.Loan, p = 0.5, list = FALSE)
+validation_index = createDataPartition(bank$Personal.Loan, p = 0.3, list = FALSE)
+
+trainknn = knn(train=train[,-8], test = train[,-8], cl = train[,8], k =3)
+testknn = knn(train = train[,-8], test = test[,-8], cl = train[,8], k =3)
+validationknn = knn(train = train[,-8], test = validation[,-8], cl = train[,8], k =3)
+
+#confusion matrices
+
+confusionMatrix(trainknn, train[,8])
+confusionMatrix(testknn, test[,8])  
+confusionMatrix(validationknn, validation[,8])
